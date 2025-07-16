@@ -1,0 +1,15 @@
+# Environment configuration
+.env
+
+# Local-only data
+.claude/
+
+# Python cache & bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyd.dSYM
+
+# Optional: test data (adjust if necessary)
+sample/
