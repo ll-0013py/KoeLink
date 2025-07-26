@@ -8,21 +8,23 @@
 
 </div>
 
-A tool that translates Japanese audio/video to English audio and generates corresponding scripts.
+A comprehensive tool that translates Japanese audio/video to English audio and generates corresponding scripts.
 
 *KoeLink* (声Link) bridges language barriers, enabling seamless communication regardless of linguistic proficiency.
 
 ## Overview
 
-This system can convert Japanese presentation videos/audio into English audio translation with corresponding scripts. It can also be run on Google Colaboratory.
+KoeLink is a modular Python application that converts Japanese presentation videos/audio into English audio translations with corresponding scripts. It features a user-friendly command-line interface with progress tracking and can be run both locally and on Google Colaboratory.
 
 ## Features
 
-- **Japanese Speech Recognition**: Automatic transcription using SpeechFlow
-- **Text Correction**: Japanese text refinement using ChatGPT
+- **Japanese Speech Recognition**: Automatic transcription using SpeechFlow API
+- **Text Correction**: Japanese text refinement using OpenAI's ChatGPT
 - **Translation**: High-quality Japanese to English translation using DeepL
-- **Speech Synthesis**: English audio generation using Genny
+- **Speech Synthesis**: Natural English audio generation using Genny (Lovo AI)
 - **Audio Segmentation**: Automatic splitting of long audio (approximately 20-minute segments)
+- **Progress Tracking**: Real-time progress indicators with step-by-step feedback
+- **Error Handling**: Comprehensive error handling and validation
 
 ## Usage
 
@@ -105,6 +107,33 @@ This system can convert Japanese presentation videos/audio into English audio tr
 - Processing may take a long time (depends on audio length)
 - Direct YouTube video URLs are not supported
 
+## Project Structure
+
+```
+KoeLink/
+├── main.py                 # Main application entry point
+├── main.ipynb             # Jupyter notebook version for Google Colab
+├── requirements.txt       # Python dependencies
+├── .env                   # API credentials (create this file)
+├── config/
+│   ├── __init__.py
+│   └── settings.py        # Configuration management
+├── modules/
+│   ├── __init__.py
+│   ├── speechflow_transcription.py  # SpeechFlow integration
+│   ├── chatgpt_text_correction.py   # ChatGPT text refinement
+│   ├── deepl_translation.py         # DeepL translation
+│   └── genny_synthesis.py           # Genny speech synthesis
+├── utils/
+│   ├── __init__.py
+│   └── file_utils.py      # File handling utilities
+├── data/
+│   ├── context.txt        # ChatGPT context information
+│   └── prompt_fix_jp.txt  # Japanese text correction prompt
+└── output/                # Generated output files
+
+```
+
 ## Processing Flow
 
 ```
@@ -115,31 +144,49 @@ Japanese Audio/Video → Speech Recognition → Text Correction → English Tran
 
 ## API Services Used
 
-- [SpeechFlow](https://docs.speechmatics.com/flow/flow-api-ref): Real-time speech-to-text API service with live audio streaming capabilities
-- [OpenAI](https://platform.openai.com/docs/api-reference): Provides various AI models including GPT for text generation and analysis
-- [DeepL](https://github.com/DeepLcom/deepl-python): High-quality language translation API with support for multiple languages
-- [Genny](https://github.com/cheekybits/genny): Text-to-speech synthesis service
+- [SpeechFlow](https://docs.speechflow.io/): Professional speech-to-text API service for accurate transcription
+- [OpenAI](https://platform.openai.com/docs/api-reference): AI models including GPT-4 for text generation and refinement
+- [DeepL](https://www.deepl.com/docs-api): Industry-leading translation API with high accuracy
+- [Genny (Lovo AI)](https://docs.genny.lovo.ai/): Advanced text-to-speech synthesis with natural voices
 
 Each service provides specific functionalities:
-- **SpeechFlow**: Handles real-time audio transcription and processing
-- **OpenAI**: Offers advanced language models and AI capabilities for text refinement
-- **DeepL**: Provides professional-grade translation services
-- **Genny**: Facilitates high-quality speech synthesis
+- **SpeechFlow**: Converts Japanese audio to text with high accuracy
+- **OpenAI ChatGPT**: Corrects and refines transcribed Japanese text
+- **DeepL**: Provides professional-grade Japanese to English translation
+- **Genny**: Generates natural-sounding English speech from text
 
 ## Requirements
 
-Before using this program, you need to:
-1. Install the libraries described in `requirements.txt`
-2. Set up API keys for all required services
-3. Create a `.env` file with your API credentials
+### System Requirements
+- Python 3.8 or higher (3.13 compatible)
+- For audio processing: ffmpeg (automatically handled by pydub)
 
-If you're running `main.py` in your local environment, the program will automatically load settings from the `.env` file.
-If you're using Google Colaboratory with `main.ipynb`, please change the following variables to suit your environment:
+### Python Dependencies
+Install all required packages:
+```bash
+pip install -r requirements.txt
+```
 
-- `env_path`
-- `context_path`
-- `prompt_fix_jp_path` (optional)
-- `output_dir`
+Required packages:
+- `python-dotenv`: Environment variable management
+- `requests`: HTTP requests for API communication
+- `pydub`: Audio file manipulation
+- `openai`: OpenAI API client
+- `deepl`: DeepL translation API client
+- `pytz`: Timezone handling
+- `audioop-lts`: Audio operations (for Python 3.13+)
+
+### API Keys
+You need to obtain API keys from the following services:
+1. **SpeechFlow**: [Sign up here](https://speechflow.io/)
+2. **OpenAI**: [Get API key](https://platform.openai.com/api-keys)
+3. **DeepL**: [Create account](https://www.deepl.com/pro-api)
+4. **Genny (Lovo AI)**: [Get started](https://genny.lovo.ai/)
+
+### Configuration Files
+1. Create `data/context.txt` with ChatGPT context instructions
+2. Create `data/prompt_fix_jp.txt` with Japanese correction prompt template
+3. Ensure `output/` directory exists (created automatically)
 
 ## License
 

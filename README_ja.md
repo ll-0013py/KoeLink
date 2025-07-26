@@ -8,21 +8,23 @@
 
 </div>
 
-日本語音声・動画を英語音声に翻訳し、対応するスクリプトを生成するツールです。
+日本語音声・動画を英語音声に翻訳し、対応するスクリプトを生成する包括的なツールです。
 
 *KoeLink*（声Link）は言語の壁を越えて、言語の得意不得意を問わず誰でもコミュニケーションが取れることを目指しています。
 
 ## 概要
 
-このシステムは、日本語のプレゼンテーション動画や音声を英語音声に翻訳し、対応するスクリプトも出力します。Google Colaboratoryでも実行可能です。
+KoeLinkは、日本語のプレゼンテーション動画や音声を英語音声に翻訳し、対応するスクリプトも出力するモジュール化されたPythonアプリケーションです。進捗状況の追跡機能を備えたユーザーフレンドリーなコマンドラインインターフェースを提供し、ローカル環境とGoogle Colaboratoryの両方で実行可能です。
 
 ## 機能
 
-- 日本語音声の自動文字起こし（SpeechFlow）
-- 日本語テキストの自動修正（ChatGPT）
-- 日本語から英語への翻訳（DeepL）
-- 英語音声の自動生成（Genny）
-- 長時間音声の自動分割（約20分単位）
+- **日本語音声認識**: SpeechFlow APIを使用した自動文字起こし
+- **テキスト修正**: OpenAIのChatGPTによる日本語テキストの改善
+- **翻訳**: DeepLによる高品質な日本語から英語への翻訳
+- **音声合成**: Genny（Lovo AI）による自然な英語音声生成
+- **音声分割**: 長時間音声の自動分割（約20分単位）
+- **進捗追跡**: ステップごとのフィードバックとリアルタイム進捗表示
+- **エラーハンドリング**: 包括的なエラー処理と検証機能
 
 ## 使用方法
 
@@ -105,6 +107,32 @@
 - 長時間の処理が必要な場合があります（音声の長さによる）
 - YouTube動画のURLは直接対応していません
 
+## プロジェクト構成
+
+```
+KoeLink/
+├── main.py                 # メインアプリケーションエントリーポイント
+├── main.ipynb             # Google Colab用Jupyterノートブック
+├── requirements.txt       # Python依存関係
+├── .env                   # API認証情報（このファイルを作成）
+├── config/
+│   ├── __init__.py
+│   └── settings.py        # 設定管理
+├── modules/
+│   ├── __init__.py
+│   ├── speechflow_transcription.py  # SpeechFlow統合
+│   ├── chatgpt_text_correction.py   # ChatGPTテキスト修正
+│   ├── deepl_translation.py         # DeepL翻訳
+│   └── genny_synthesis.py           # Genny音声合成
+├── utils/
+│   ├── __init__.py
+│   └── file_utils.py      # ファイル処理ユーティリティ
+├── data/
+│   ├── context.txt        # ChatGPTコンテキスト情報
+│   └── prompt_fix_jp.txt  # 日本語テキスト修正プロンプト
+└── output/                # 生成された出力ファイル
+```
+
 ## 処理フロー
 
 ```
@@ -115,10 +143,49 @@
 
 ## 使用API
 
-- [SpeechFlow](https://docs.speechmatics.com/flow/flow-api-ref): リアルタイム音声認識
-- [OpenAI](https://platform.openai.com/docs/api-reference): テキスト修正・生成
-- [DeepL](https://github.com/DeepLcom/deepl-python): 高品質翻訳
-- [Genny](https://github.com/cheekybits/genny): 音声合成
+- [SpeechFlow](https://docs.speechflow.io/): 高精度な文字起こしのためのプロフェッショナル音声認識APIサービス
+- [OpenAI](https://platform.openai.com/docs/api-reference): テキスト生成と改善のためのGPT-4を含むAIモデル
+- [DeepL](https://www.deepl.com/docs-api): 高精度な業界最先端の翻訳API
+- [Genny (Lovo AI)](https://docs.genny.lovo.ai/): 自然な音声を持つ高度なテキスト読み上げ合成
+
+各サービスは特定の機能を提供します：
+- **SpeechFlow**: 日本語音声を高精度でテキストに変換
+- **OpenAI ChatGPT**: 文字起こしされた日本語テキストを修正・改善
+- **DeepL**: プロフェッショナルレベルの日本語から英語への翻訳を提供
+- **Genny**: テキストから自然な英語音声を生成
+
+## 必要な環境
+
+### システム要件
+- Python 3.8以上（3.13対応）
+- 音声処理用: ffmpeg（pydubが自動的に処理）
+
+### Python依存関係
+必要なパッケージをすべてインストール：
+```bash
+pip install -r requirements.txt
+```
+
+必要なパッケージ：
+- `python-dotenv`: 環境変数管理
+- `requests`: API通信用HTTPリクエスト
+- `pydub`: 音声ファイル操作
+- `openai`: OpenAI APIクライアント
+- `deepl`: DeepL翻訳APIクライアント
+- `pytz`: タイムゾーン処理
+- `audioop-lts`: 音声操作（Python 3.13以降用）
+
+### APIキー
+以下のサービスからAPIキーを取得する必要があります：
+1. **SpeechFlow**: [サインアップ](https://speechflow.io/)
+2. **OpenAI**: [APIキー取得](https://platform.openai.com/api-keys)
+3. **DeepL**: [アカウント作成](https://www.deepl.com/pro-api)
+4. **Genny (Lovo AI)**: [開始する](https://genny.lovo.ai/)
+
+### 設定ファイル
+1. ChatGPTコンテキスト指示を含む`data/context.txt`を作成
+2. 日本語修正プロンプトテンプレートを含む`data/prompt_fix_jp.txt`を作成
+3. `output/`ディレクトリが存在することを確認（自動作成される）
 
 ## ライセンス
 
