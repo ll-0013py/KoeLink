@@ -110,7 +110,7 @@ KoeLink is a modular Python application that converts Japanese presentation vide
 ## Project Structure
 
 ```
-KoeLink/
+koelink/
 ├── main.py                 # Main application entry point
 ├── main.ipynb             # Jupyter notebook version for Google Colab
 ├── requirements.txt       # Python dependencies

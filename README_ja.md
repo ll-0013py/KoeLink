@@ -110,7 +110,7 @@ KoeLinkは、日本語のプレゼンテーション動画や音声を英語音�
 ## プロジェクト構成
 
 ```
-KoeLink/
+koelink/
 ├── main.py                 # メインアプリケーションエントリーポイント
 ├── main.ipynb             # Google Colab用Jupyterノートブック
 ├── requirements.txt       # Python依存関係
